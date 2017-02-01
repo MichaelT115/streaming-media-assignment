@@ -3,9 +3,9 @@ const path = require('path');   // Path module
 
 const loadFile = (request, response, fileName, fileType) => {
   // Find file
-  const file = path.resolve(__dirname, fileName);
+  const filePath = path.resolve(__dirname, fileName);
 
-  fs.stat(file, (err, stats) => {
+  fs.stat(filePath, (err, stats) => {
     // If there is an error
     if (err) {
       // If the file could not be found
@@ -19,31 +19,15 @@ const loadFile = (request, response, fileName, fileType) => {
 
     // Find byte range
     const range = request.headers.range;
-
-
     // If there is no byte range
     if (!range) {
       return response.writeHead(416); // 416 Error: Requested Range no Satisfiable
     }
 
-    // Get positions
-    // "bytes=0000-0001" becomes: ["0000", "0001"]
-    const positions = range.replace(/bytes=/, '').split('-');
-
-    // Get start of byte range
-    let start = parseInt(positions[0], 10);
-
-    // Get end of byte range
-    // This is either defined in the range or is the last byte.
     const total = stats.size;
-    const end = positions[1] ? parseInt(positions[1], 10) : total - 1;
-
-    // In case the start exceeds the end, set the start to one before the end.
-    if (start > end) {
-      start = end - 1;
-    }
-
-    // Size in bytes of what is send back to the client
+    const positions = range.replace(/bytes=/, '').split('-').map(Number);
+    const end = positions[1] || total - 1;
+    const start = positions[0] > end ? end - 1 : positions[0];
     const chunksize = (end - start) + 1;
 
     // Successful response to client
@@ -55,7 +39,7 @@ const loadFile = (request, response, fileName, fileType) => {
     });
 
     // Get video in range
-    const stream = fs.createReadStream(file, { start, end });
+    const stream = fs.createReadStream(filePath, { start, end });
 
     // Send video stream
     stream.on('open', () => {
