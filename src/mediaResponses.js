@@ -1,12 +1,10 @@
 const fs = require('fs');       // File system module
 const path = require('path');   // Path module
 
-// Send the media file
-const getParty = (request, response) => {
-  // Find the media file
-  const file = path.resolve(__dirname, '../client/party.mp4');
+const loadFile = (request, response, fileName, fileType) => {
+  // Find file
+  const file = path.resolve(__dirname, fileName);
 
-  // Get file
   fs.stat(file, (err, stats) => {
     // If there is an error
     if (err) {
@@ -53,7 +51,7 @@ const getParty = (request, response) => {
       'Content-Range': `bytes  ${start}-${end}/${total}`,
       'Accept-Ranges': 'bytes',
       'Content-Length': chunksize,
-      'Content-Type': 'video/mp4',
+      'Content-Type': fileType,
     });
 
     // Get video in range
@@ -74,4 +72,20 @@ const getParty = (request, response) => {
   });
 };
 
+// Send party file
+const getParty = (request, response) => {
+  loadFile(request, response, '../client/party.mp4', 'video/mp4');
+};
+
+const getBling = (request, response) => {
+  loadFile(request, response, '../client/bling.mp3', 'audio/mpeg');
+};
+
+const getBird = (request, response) => {
+  loadFile(request, response, '../client/bird.mp4', 'video/mp4');
+};
+
+
 module.exports.getParty = getParty;
+module.exports.getBling = getBling;
+module.exports.getBird = getBird;
