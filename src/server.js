@@ -2,8 +2,10 @@ const http = require('http');
 const htmlHandler = require('./htmlResponses.js');
 const mediaHandler = require('./mediaResponses.js');
 
+// Gets the port
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
+// Handles requests
 const onRequest = (request, response) => {
   console.log(request.url);
 
@@ -32,6 +34,7 @@ const onRequest = (request, response) => {
   }
 };
 
+// Creates server
 http.createServer(onRequest).listen(port);
 
 console.log(`Listening on 127.0.0.1: ${port}`);

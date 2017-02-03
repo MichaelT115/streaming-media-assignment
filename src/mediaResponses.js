@@ -21,6 +21,8 @@ const findFile = filePath => new Promise((resolve, reject) => {
   });
 });
 
+// Creates a function that accepts a request, response, and file path.
+// That function creates a promise that receives a stats of a file to make a reasponse stream
 const createResponseStream = (request, response, filePath) => stats => new Promise(() => {
   // Find byte range
   const range = request.headers.range;
@@ -64,6 +66,8 @@ const createResponseStream = (request, response, filePath) => stats => new Promi
   return stream;
 });
 
+
+// Creates a promise to load a file
 const loadFile2 = (request, response, fileName) => new Promise(() => {
   // Find file
   const filePath = path.resolve(__dirname, fileName);
@@ -83,6 +87,7 @@ const loadFile2 = (request, response, fileName) => new Promise(() => {
     });
 });
 
+// Simply loads a file
 const loadFile = (request, response, fileName) => {
   // Find file
   const filePath = path.resolve(__dirname, fileName);
